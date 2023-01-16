@@ -1,4 +1,4 @@
-module easy-go
+module github.com/RunningShrimp/easy-go
 
 go 1.19
 
