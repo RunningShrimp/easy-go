@@ -6,17 +6,17 @@ import (
 	"github.com/jmoiron/sqlx"
 )
 
-// RsContext request -> mid with RsCtx -> handler(ctx, req, res)
-type RsContext struct {
+// EasyGoContext request -> mid with RsCtx -> handler(ctx, req, res)
+type EasyGoContext struct {
 	ctx context.Context
 	env string // init
 }
 
-func (c RsContext) GetEnv() string {
+func (c EasyGoContext) GetEnv() string {
 	return c.env
 }
 
-func (c RsContext) Context() context.Context {
+func (c EasyGoContext) Context() context.Context {
 	return c.ctx
 }
 
