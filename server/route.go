@@ -1,9 +1,9 @@
 package server
 
 import (
+	"github.com/RunningShrimp/easy-go/app"
 	"net/http"
 	"reflect"
-	"shrimp_blog_sever/framework/app"
 )
 
 // Rest 批量添加路由，添加GET，POST，PUT，DELETE方法，暂不支持从路由上解析参数
@@ -29,26 +29,26 @@ func Rest(patten string, controller app.IController) {
 }
 
 // Get http-get
-func Get(patten string, handler any) {
+func Get(patten string, handler func(request app.IRequest) string) {
 	addRouter(http.MethodGet, patten, handler)
 }
 
 // Post http-post
-func Post(patten string, handler any) {
+func Post(patten string, handler app.RequestHandler) {
 	addRouter(http.MethodPost, patten, handler)
 }
 
 // Put http-put
-func Put(patten string, handler any) {
+func Put(patten string, handler app.RequestHandler) {
 	addRouter(http.MethodPut, patten, handler)
 }
 
 // Delete http-delete
-func Delete(patten string, handler any) {
+func Delete(patten string, handler app.RequestHandler) {
 	addRouter(http.MethodDelete, patten, handler)
 }
 
-func addRouter(method, patten string, handler any) {
+func addRouter(method, patten string, handler app.RequestHandler) {
 	if routes == nil {
 		routes = make(map[string]map[string]*handlerInfo, 4)
 	}
@@ -69,20 +69,18 @@ func handlerRouter(method, patten string, handlerValue reflect.Value, handlerTyp
 	argInNum := handlerType.NumIn()
 	argOutNum := handlerType.NumOut()
 	info := &handlerInfo{
-		in:    make([]*reflect.Type, argInNum),
-		out:   make([]*reflect.Type, argOutNum),
+		in:    make([]reflect.Type, argInNum),
+		out:   make([]reflect.Type, argOutNum),
 		value: handlerValue,
 	}
-	//TODO:获取入参名称
 	for i := 0; i < argInNum; i++ {
 		in := handlerType.In(i)
 
-		info.in[i] = &in
+		info.in[i] = in
 	}
-	//获取出参名称
 	for i := 0; i < argOutNum; i++ {
 		out := handlerType.Out(i)
-		info.out[i] = &out
+		info.out[i] = out
 	}
 	routes[method][patten] = info
 }

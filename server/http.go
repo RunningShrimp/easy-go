@@ -3,11 +3,11 @@ package server
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/RunningShrimp/easy-go/config"
 	"io"
 	"net/http"
 	"reflect"
 	"runtime/debug"
-	"shrimp_blog_sever/framework/config"
 	"strings"
 )
 
@@ -125,7 +125,7 @@ func (s *Server) handleRequest(writer http.ResponseWriter, data map[string]any, 
 	argValues := make([]reflect.Value, 0)
 	// 4. 将请求参数注入到handler参数中
 	for _, e := range info.in {
-		argValues = append(argValues, s.dataMapStruct(data, *e))
+		argValues = append(argValues, s.dataMapStruct(data, e))
 	}
 	// 5. 执行handler
 	resultArr := info.value.Call(argValues)
@@ -136,7 +136,6 @@ func (s *Server) handleRequest(writer http.ResponseWriter, data map[string]any, 
 	//}
 	//TODO:目前只支持string并且只支持一个返回参数
 	if len(resultArr) > 0 {
-
 		_, err := fmt.Fprintf(writer, "%s", resultArr[0].String())
 		if err != nil {
 			fmt.Println(err)
