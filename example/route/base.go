@@ -6,5 +6,6 @@ import (
 )
 
 func init() {
-	server.Get("/user/info", &api.UserInfo)
+	server.Get("/user/info", api.UserInfo)
+	server.Rest("/user", &api.UserController{})
 }

@@ -29,7 +29,7 @@ func Rest(patten string, controller app.IController) {
 }
 
 // Get http-get
-func Get(patten string, handler func(request app.IRequest) string) {
+func Get(patten string, handler app.RequestHandler) {
 	addRouter(http.MethodGet, patten, handler)
 }
 
