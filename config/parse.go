@@ -11,6 +11,8 @@ import (
 func getEnvCfgFilePath(entranceFile string) string {
 	resourceDir, resourceFile := getEntranceDirectory(entranceFile)
 
+	RsConfig.EnvCfgFilePath = resourceFile
+
 	envType := getEnvType(resourceFile)
 
 	err := filepath.WalkDir(
@@ -69,5 +71,5 @@ func getEntranceDirectory(configPathPrefix string) (string, string) {
 		panic(err)
 	}
 
-	return appEntranceDirectory, filepath.Join(appEntranceDirectory, "resource", "app.yaml")
+	return filepath.Join(appEntranceDirectory, "resource"), filepath.Join(appEntranceDirectory, "resource", "app.yaml")
 }

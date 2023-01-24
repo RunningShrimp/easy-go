@@ -2,13 +2,13 @@ package api
 
 import (
 	"fmt"
-	"github.com/RunningShrimp/easy-go/app"
+	"github.com/RunningShrimp/easy-go/core"
 )
 
 type UserRequest struct {
-	app.BaseRequest
+	core.BaseRequest
 	Username string `json:"username"`
-	Age      int    `json:"age"`
+	Age      int64  `json:"age"`
 	Address  string `json:"address"`
 }
 
@@ -17,7 +17,7 @@ func UserInfo(request UserRequest) string {
 }
 
 type UserController struct {
-	app.BaseController
+	core.BaseController
 }
 
 func (c *UserController) Name(request *UserRequest) string {

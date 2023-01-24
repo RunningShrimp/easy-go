@@ -4,10 +4,11 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/RunningShrimp/easy-go/config"
+	"github.com/RunningShrimp/easy-go/logs"
 	"io"
 	"net/http"
 	"reflect"
-	"runtime/debug"
+	"strconv"
 	"strings"
 )
 
@@ -16,7 +17,7 @@ type Server struct {
 	port string
 }
 
-func NewServer(name ...string) *Server {
+func NewServer(path string, name ...string) *Server {
 	var serverName = config.RsConfig.Config.Server.Name
 	if serverName == "" {
 		if len(name) == 1 {
@@ -25,6 +26,7 @@ func NewServer(name ...string) *Server {
 			serverName = strings.Join(name, "-")
 		}
 	}
+	config.Init(path)
 	return &Server{
 		name: serverName,
 		port: config.ServerPort(),
@@ -40,12 +42,12 @@ func (s *Server) Run() {
 }
 
 func (s *Server) ServeHTTP(writer http.ResponseWriter, request *http.Request) {
-	defer func() {
-		if r := recover(); r != nil {
-			debug.PrintStack()
-			writer.WriteHeader(http.StatusInternalServerError)
-		}
-	}()
+	//defer func() {
+	//	if r := recover(); r != nil {
+	//		fmt.Println(r)
+	//		writer.WriteHeader(http.StatusInternalServerError)
+	//	}
+	//}()
 
 	// 1. 获取请求方法与url
 	httpMethod := request.Method
@@ -68,10 +70,15 @@ func (s *Server) ServeHTTP(writer http.ResponseWriter, request *http.Request) {
 		}
 
 		//TODO:支持url编辑参数
-		if bytes == nil {
+		if len(bytes) == 0 || bytes == nil {
 			form := request.Form
-			for k, v := range form {
-				data[k] = v
+			if form == nil {
+				form = request.URL.Query()
+			}
+			for k, v := range form { // 这里因为取得数据为字符串数组，只要长度为1则认为是字符串
+				if len(v) == 1 {
+					data[k] = v[0]
+				}
 			}
 		} else {
 			err = json.Unmarshal(bytes, &data)
@@ -100,7 +107,9 @@ func (s *Server) dataMapStruct(data map[string]any, argType reflect.Type) reflec
 		if v, ok := data[tag]; ok {
 			// 检查是否需要类型转换
 			dataType := reflect.TypeOf(v)
+			fmt.Println(dataType)
 			structType := f.Type()
+			fmt.Println(structType)
 			if structType == dataType {
 				f.Set(reflect.ValueOf(v))
 			} else {
@@ -108,7 +117,59 @@ func (s *Server) dataMapStruct(data map[string]any, argType reflect.Type) reflec
 					// 转换类型
 					f.Set(reflect.ValueOf(v).Convert(structType))
 				} else {
-					panic(t.Name + " type mismatch")
+					switch structType.Kind() {
+					case reflect.Int:
+					case reflect.Int8:
+					case reflect.Int16:
+					case reflect.Int32:
+					case reflect.Int64:
+						v, err := strconv.ParseInt(v.(string), 10, 64)
+						if err != nil {
+							// 这里只给提示便可以，不需要处理错误
+							//TODO：未来这里需要优化
+							logs.Logger.Info("数据格式错误")
+							break
+						}
+						f.SetInt(v)
+						break
+					case reflect.Float32:
+					case reflect.Float64:
+						v, err := strconv.ParseFloat(v.(string), 64)
+						if err != nil {
+							logs.Logger.Info("数据格式错误")
+							break
+						}
+
+						f.SetFloat(v)
+						break
+					case reflect.Uint:
+					case reflect.Uint8:
+					case reflect.Uint16:
+					case reflect.Uint32:
+					case reflect.Uint64:
+						v, err := strconv.ParseUint(v.(string), 10, 64)
+						if err != nil {
+							// 这里只给提示便可以，不需要处理错误
+							//TODO：未来这里需要优化
+							logs.Logger.Info("数据格式错误")
+							break
+						}
+						f.SetUint(v)
+						break
+					case reflect.Bool:
+						v, err := strconv.ParseBool(v.(string))
+						if err != nil {
+							// 这里只给提示便可以，不需要处理错误
+							//TODO：未来这里需要优化
+							logs.Logger.Info("数据格式错误")
+							break
+						}
+						f.SetBool(v)
+						break
+					default:
+
+						panic(t.Name + " type mismatch")
+					}
 				}
 			}
 		}
@@ -125,7 +186,8 @@ func (s *Server) handleRequest(writer http.ResponseWriter, data map[string]any, 
 	argValues := make([]reflect.Value, 0)
 	// 4. 将请求参数注入到handler参数中
 	for _, e := range info.in {
-		argValues = append(argValues, s.dataMapStruct(data, e))
+		fmt.Println(*e)
+		argValues = append(argValues, s.dataMapStruct(data, *e))
 	}
 	// 5. 执行handler
 	resultArr := info.value.Call(argValues)
@@ -138,7 +200,6 @@ func (s *Server) handleRequest(writer http.ResponseWriter, data map[string]any, 
 	if len(resultArr) > 0 {
 		_, err := fmt.Fprintf(writer, "%s", resultArr[0].String())
 		if err != nil {
-			fmt.Println(err)
 			return
 		}
 	} else {

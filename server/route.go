@@ -1,14 +1,14 @@
 package server
 
 import (
-	"github.com/RunningShrimp/easy-go/app"
+	"github.com/RunningShrimp/easy-go/core"
 	"net/http"
 	"reflect"
 )
 
 // Rest 批量添加路由，添加GET，POST，PUT，DELETE方法，暂不支持从路由上解析参数
 // TODO: 从路由解析参数
-func Rest(patten string, controller app.IController) {
+func Rest(patten string, controller core.IController) {
 	methodValue := reflect.ValueOf(controller)
 	getMethod := methodValue.MethodByName("Get")
 	postMethod := methodValue.MethodByName("Post")
@@ -29,26 +29,26 @@ func Rest(patten string, controller app.IController) {
 }
 
 // Get http-get
-func Get(patten string, handler app.RequestHandler) {
+func Get(patten string, handler any) {
 	addRouter(http.MethodGet, patten, handler)
 }
 
 // Post http-post
-func Post(patten string, handler app.RequestHandler) {
+func Post(patten string, handler any) {
 	addRouter(http.MethodPost, patten, handler)
 }
 
 // Put http-put
-func Put(patten string, handler app.RequestHandler) {
+func Put(patten string, handler any) {
 	addRouter(http.MethodPut, patten, handler)
 }
 
 // Delete http-delete
-func Delete(patten string, handler app.RequestHandler) {
+func Delete(patten string, handler any) {
 	addRouter(http.MethodDelete, patten, handler)
 }
 
-func addRouter(method, patten string, handler app.RequestHandler) {
+func addRouter(method, patten string, handler any) {
 	if routes == nil {
 		routes = make(map[string]map[string]*handlerInfo, 4)
 	}
@@ -69,18 +69,18 @@ func handlerRouter(method, patten string, handlerValue reflect.Value, handlerTyp
 	argInNum := handlerType.NumIn()
 	argOutNum := handlerType.NumOut()
 	info := &handlerInfo{
-		in:    make([]reflect.Type, argInNum),
-		out:   make([]reflect.Type, argOutNum),
+		in:    make([]*reflect.Type, argInNum),
+		out:   make([]*reflect.Type, argOutNum),
 		value: handlerValue,
 	}
 	for i := 0; i < argInNum; i++ {
 		in := handlerType.In(i)
 
-		info.in[i] = in
+		info.in[i] = &in
 	}
 	for i := 0; i < argOutNum; i++ {
 		out := handlerType.Out(i)
-		info.out[i] = out
+		info.out[i] = &out
 	}
 	routes[method][patten] = info
 }

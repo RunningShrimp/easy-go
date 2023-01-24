@@ -12,22 +12,23 @@ var (
 		Env:            "",
 		WrapperConfig:  WrapperConfig{},
 	}
-	AppInit IInit
+	// AppInit IInit
 )
 
 type IInit interface {
 	InitDBClient(wrapperConfig WrapperConfig)
-	InitRedisClient(wrapperConfig WrapperConfig)
+	// InitRedisClient(wrapperConfig WrapperConfig)
 }
 
 func Init(path string) {
 	initConfig(path)
-	AppInit.InitDBClient(RsConfig.WrapperConfig)
-	AppInit.InitRedisClient(RsConfig.WrapperConfig)
+	// AppInit.InitDBClient(RsConfig.WrapperConfig)
+	// AppInit.InitRedisClient(RsConfig.WrapperConfig)
 }
 
 func initConfig(configFile string) {
-	configContent, err := os.ReadFile(getEnvCfgFilePath(configFile))
+	path := getEnvCfgFilePath(configFile)
+	configContent, err := os.ReadFile(path)
 	if err != nil {
 		panic(err)
 	}
