@@ -1,0 +1,14 @@
+app:
+  server:
+    port: 8080
+    name: "虾米小站后台服务系统"
+  database:
+    type: mysql
+    url: 127.0.0.1:3306
+    dbname: shrimp_blog
+    username: root
+    password: 123456
+  redis:
+    database: 0
+    host: 127.0.0.1
+    port: 6379

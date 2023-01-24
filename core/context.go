@@ -1,9 +1,7 @@
-package app
+package core
 
 import (
 	"context"
-	"github.com/go-redis/redis"
-	"github.com/jmoiron/sqlx"
 )
 
 // EasyGoContext request -> mid with RsCtx -> handler(ctx, req, res)
@@ -19,7 +17,3 @@ func (c EasyGoContext) GetEnv() string {
 func (c EasyGoContext) Context() context.Context {
 	return c.ctx
 }
-
-var DBClient = &sqlx.DB{}
-
-var RedisClient = &redis.Client{}
