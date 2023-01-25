@@ -34,15 +34,21 @@ func NewServer(path string, name ...string) *Server {
 }
 
 func (s *Server) Run() {
+	// TODO: 定制化server，提供更多的定制化接口
+	server := http.Server{
+		Addr:    s.port,
+		Handler: s,
+	}
+
 	fmt.Printf("%s server is  running\n", s.name)
-	err := http.ListenAndServe(s.port, s)
+	err := server.ListenAndServe()
 	if err != nil {
 		panic(err)
 	}
 }
 
 func (s *Server) ServeHTTP(writer http.ResponseWriter, request *http.Request) {
-	//defer func() {
+	// defer func() {
 	//	if r := recover(); r != nil {
 	//		fmt.Println(r)
 	//		writer.WriteHeader(http.StatusInternalServerError)
@@ -126,7 +132,7 @@ func (s *Server) dataMapStruct(data map[string]any, argType reflect.Type) reflec
 						v, err := strconv.ParseInt(v.(string), 10, 64)
 						if err != nil {
 							// 这里只给提示便可以，不需要处理错误
-							//TODO：未来这里需要优化
+							// TODO：未来这里需要优化
 							core.Logger.Info("数据格式错误")
 							break
 						}
@@ -150,7 +156,7 @@ func (s *Server) dataMapStruct(data map[string]any, argType reflect.Type) reflec
 						v, err := strconv.ParseUint(v.(string), 10, 64)
 						if err != nil {
 							// 这里只给提示便可以，不需要处理错误
-							//TODO：未来这里需要优化
+							// TODO：未来这里需要优化
 							core.Logger.Info("数据格式错误")
 							break
 						}
@@ -160,7 +166,7 @@ func (s *Server) dataMapStruct(data map[string]any, argType reflect.Type) reflec
 						v, err := strconv.ParseBool(v.(string))
 						if err != nil {
 							// 这里只给提示便可以，不需要处理错误
-							//TODO：未来这里需要优化
+							// TODO：未来这里需要优化
 							core.Logger.Info("数据格式错误")
 							break
 						}
@@ -196,12 +202,50 @@ func (s *Server) handleRequest(writer http.ResponseWriter, data map[string]any, 
 	//	// TODO: 检查error
 	//
 	//}
-	//TODO:目前只支持string并且只支持一个返回参数
 	if len(resultArr) > 0 {
-		_, err := fmt.Fprintf(writer, "%s", resultArr[0].String())
-		if err != nil {
+		val := resultArr[0]
+
+		switch val.Kind() {
+		case reflect.Slice:
+			_, _ = fmt.Fprintf(writer, "%v", val.String())
 			return
+		case reflect.Bool:
+			_, _ = fmt.Fprintf(writer, "%v", val.Bool())
+			return
+		case reflect.Int:
+		case reflect.Int8:
+		case reflect.Int16:
+		case reflect.Int32:
+		case reflect.Int64:
+			_, _ = fmt.Fprintf(writer, "%d", val.Int())
+			return
+		case reflect.Uint:
+		case reflect.Uint8:
+		case reflect.Uint16:
+		case reflect.Uint32:
+		case reflect.Uint64:
+			_, _ = fmt.Fprintf(writer, "%d", val.Uint())
+			return
+		case reflect.Float32:
+		case reflect.Float64:
+			_, _ = fmt.Fprintf(writer, "%f", val.Float())
+			return
+		case reflect.String:
+
+			_, _ = fmt.Fprintf(writer, "%s", val.String())
+			return
+		case reflect.Struct:
+			bytes, err := json.Marshal(val.Bytes())
+			if err != nil {
+				return
+			}
+			_, _ = fmt.Fprintf(writer, "%s", string(bytes))
+			return
+		default:
+			writer.Write(val.Bytes())
+			writer.WriteHeader(http.StatusOK)
 		}
+
 	} else {
 		writer.WriteHeader(http.StatusOK)
 	}
