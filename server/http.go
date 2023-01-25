@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/RunningShrimp/easy-go/config"
-	"github.com/RunningShrimp/easy-go/logs"
+	"github.com/RunningShrimp/easy-go/core"
 	"io"
 	"net/http"
 	"reflect"
@@ -127,7 +127,7 @@ func (s *Server) dataMapStruct(data map[string]any, argType reflect.Type) reflec
 						if err != nil {
 							// 这里只给提示便可以，不需要处理错误
 							//TODO：未来这里需要优化
-							logs.Logger.Info("数据格式错误")
+							core.Logger.Info("数据格式错误")
 							break
 						}
 						f.SetInt(v)
@@ -136,7 +136,7 @@ func (s *Server) dataMapStruct(data map[string]any, argType reflect.Type) reflec
 					case reflect.Float64:
 						v, err := strconv.ParseFloat(v.(string), 64)
 						if err != nil {
-							logs.Logger.Info("数据格式错误")
+							core.Logger.Info("数据格式错误")
 							break
 						}
 
@@ -151,7 +151,7 @@ func (s *Server) dataMapStruct(data map[string]any, argType reflect.Type) reflec
 						if err != nil {
 							// 这里只给提示便可以，不需要处理错误
 							//TODO：未来这里需要优化
-							logs.Logger.Info("数据格式错误")
+							core.Logger.Info("数据格式错误")
 							break
 						}
 						f.SetUint(v)
@@ -161,7 +161,7 @@ func (s *Server) dataMapStruct(data map[string]any, argType reflect.Type) reflec
 						if err != nil {
 							// 这里只给提示便可以，不需要处理错误
 							//TODO：未来这里需要优化
-							logs.Logger.Info("数据格式错误")
+							core.Logger.Info("数据格式错误")
 							break
 						}
 						f.SetBool(v)
