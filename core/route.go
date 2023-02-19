@@ -1,14 +1,15 @@
-package server
+package core
 
 import (
-	"github.com/RunningShrimp/easy-go/core"
 	"net/http"
 	"reflect"
 )
 
+var routes map[string]map[string]*handlerInfo
+
 // Rest 批量添加路由，添加GET，POST，PUT，DELETE方法，暂不支持从路由上解析参数
-// TODO: 从路由解析参数
-func Rest(patten string, controller core.IController) {
+// TODO.md: 从路由解析参数
+func Rest(patten string, controller IController) {
 	methodValue := reflect.ValueOf(controller)
 	getMethod := methodValue.MethodByName("Get")
 	postMethod := methodValue.MethodByName("Post")

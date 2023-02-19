@@ -1,11 +1,11 @@
 package route
 
 import (
+	"github.com/RunningShrimp/easy-go/core"
 	"github.com/RunningShrimp/easy-go/example/api"
-	"github.com/RunningShrimp/easy-go/server"
 )
 
 func init() {
-	server.Get("/user/info", api.UserInfo)
-	server.Rest("/user", &api.UserController{})
+	core.Get("/user/info", api.UserInfo)
+	core.Rest("/user", &api.UserController{})
 }
