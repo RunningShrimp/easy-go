@@ -9,27 +9,24 @@ import (
 	"strconv"
 )
 
-type handlerInfo struct {
-	in    []*reflect.Type // 入参列表,按照
-	out   []*reflect.Type // 出参列表
-	value reflect.Value   // 处理方法
+type EasyGoServeHTTP struct {
+	router EasyGoHttpRouter
 }
 
-type easyGoServeHTTP struct {
-}
-
-func DefaultEasyGoServeHTTP() *easyGoServeHTTP {
-	return &easyGoServeHTTP{}
+func DefaultEasyGoServeHTTP() *EasyGoServeHTTP {
+	return &EasyGoServeHTTP{
+		MRoutes,
+	}
 }
 
 // http 处理引擎，不对外暴露
-func (s *easyGoServeHTTP) ServeHTTP(writer http.ResponseWriter, request *http.Request) {
+func (s *EasyGoServeHTTP) ServeHTTP(writer http.ResponseWriter, request *http.Request) {
 
 	// 1. 获取请求方法与url
 	httpMethod := request.Method
 	urlStr := request.URL.Path
 	// 2. 根据请求方法和url获取handler
-	if info, ok := routes[httpMethod][urlStr]; ok {
+	if handleFunc, ok := s.router.DispatchHandlerByMethodAndUlr(httpMethod, urlStr); ok {
 		data := make(map[string]any)
 		bodyData := request.Body
 		defer func(bodyData io.ReadCloser) {
@@ -63,14 +60,14 @@ func (s *easyGoServeHTTP) ServeHTTP(writer http.ResponseWriter, request *http.Re
 				return
 			}
 		}
-		s.handleRequest(writer, data, info)
+		s.handleRequest(writer, data, &handleFunc)
 	} else {
 		writer.WriteHeader(http.StatusMethodNotAllowed)
 	}
 
 }
 
-func (s *easyGoServeHTTP) dataMapStruct(data map[string]any, argType reflect.Type) reflect.Value {
+func (s *EasyGoServeHTTP) dataMapStruct(data map[string]any, argType reflect.Type) reflect.Value {
 	val := reflect.New(argType)
 
 	if val.Kind() == reflect.Ptr {
@@ -154,8 +151,8 @@ func (s *easyGoServeHTTP) dataMapStruct(data map[string]any, argType reflect.Typ
 	return val
 }
 
-func (s *easyGoServeHTTP) handleRequest(writer http.ResponseWriter, data map[string]any, info *handlerInfo) {
-	if routes == nil {
+func (s *EasyGoServeHTTP) handleRequest(writer http.ResponseWriter, data map[string]any, info *handlerFunc) {
+	if s.router == nil {
 		panic("请注册路由")
 	}
 
