@@ -1,10 +1,19 @@
 package main
 
 import (
-	_ "github.com/RunningShrimp/easy-go/example/route"
-	"github.com/RunningShrimp/easy-go/server"
+	easygo "github.com/RunningShrimp/easy-go"
+	"github.com/RunningShrimp/easy-go/example/api"
 )
 
 func main() {
-	server.NewServer("./example").Run()
+	easygoApp := easygo.NewEasyGo()
+
+	{
+		router := easygoApp.NewRouter()
+		router.Get("/user/info", api.UserInfo)
+		router.RestGroup("/user", &api.UserController{})
+	}
+
+	easygoApp.Run()
+
 }

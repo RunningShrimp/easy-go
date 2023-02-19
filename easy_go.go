@@ -9,8 +9,18 @@ import (
 	"time"
 )
 
+var log = core.Log
+
 type easyGoCtx struct {
 	parentCtx context.Context
+}
+
+type RouteRegister interface {
+	Get(patten string, handler any)
+	Post(patten string, handler any)
+	Put(patten string, handler any)
+	Delete(patten string, handler any)
+	RestGroup(patten string, controller core.IController)
 }
 
 // EasyGo 启动实例
@@ -32,7 +42,11 @@ type EasyGo struct {
 	// 支持从配置文件读取配置，方便统一管理配置，但大部分都是代码里硬编码
 	appConfigYamlFilePath string
 
-	DEBUG bool
+	route RouteRegister
+}
+
+func (g EasyGo) NewRouter() RouteRegister {
+	return g.route
 }
 
 func NewEasyGo(options ...Option) *EasyGo {
@@ -41,6 +55,7 @@ func NewEasyGo(options ...Option) *EasyGo {
 		serveHandler: core.DefaultEasyGoServeHTTP(),
 		port:         "2357",
 		name:         "EasyGo",
+		route:        core.MRoutes,
 	}
 
 	for _, opt := range options {
@@ -51,6 +66,13 @@ func NewEasyGo(options ...Option) *EasyGo {
 		// init config from file
 	}
 
+	if easyGo.baseServer == nil {
+		easyGo.baseServer = &http.Server{
+			Addr:    ":" + easyGo.port,
+			Handler: core.DefaultEasyGoServeHTTP(),
+		}
+	}
+
 	// init log
 
 	// listening single or kill
@@ -58,18 +80,11 @@ func NewEasyGo(options ...Option) *EasyGo {
 	return easyGo
 }
 
-func (easyGo *EasyGo) Run() {
+func (g EasyGo) Run() {
 
-	if easyGo.baseServer == nil {
-		easyGo.baseServer = &http.Server{
-			Addr:    easyGo.port,
-			Handler: core.DefaultEasyGoServeHTTP(),
-		}
-	}
-
-	err := easyGo.baseServer.ListenAndServe()
+	log.Info(fmt.Sprintf("[Name-%s-Port-%s] HTTP server is running.", g.name, g.port))
+	err := g.baseServer.ListenAndServe()
 	if err != nil {
-		core.Log.Fatal("Server run failed", zap.String("err", err.Error()))
+		log.Fatal("Server run failed", zap.String("err", err.Error()))
 	}
-	core.Log.Info(fmt.Sprintf("[Name-%s-Port-%s] HTTP server is running.", easyGo.name, easyGo.port))
 }
