@@ -5,18 +5,18 @@ import (
 	"go.uber.org/zap"
 )
 
-var Logger *zap.Logger
+var Log *zap.Logger
 
 func init() {
 	var err error
 
 	switch config.RsConfig.Env {
 	case "dev":
-		Logger, err = zap.NewDevelopment()
+		Log, err = zap.NewDevelopment()
 	case "prd":
-		Logger, err = zap.NewProduction()
+		Log, err = zap.NewProduction()
 	default:
-		Logger, err = zap.NewDevelopment()
+		Log, err = zap.NewDevelopment()
 	}
 
 	if err != nil {
