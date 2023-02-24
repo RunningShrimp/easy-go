@@ -1,4 +1,4 @@
-package core
+package log
 
 import (
 	"github.com/RunningShrimp/easy-go/config"
