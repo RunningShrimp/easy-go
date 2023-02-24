@@ -4,17 +4,27 @@ import (
 	"context"
 	"fmt"
 	"github.com/RunningShrimp/easy-go/core"
-	log2 "github.com/RunningShrimp/easy-go/core/log"
 	"github.com/RunningShrimp/easy-go/core/router"
-	"go.uber.org/zap"
 	"net/http"
+
+	"github.com/RunningShrimp/easy-go/core/log"
+
+	"go.uber.org/zap"
 	"time"
 )
 
-var log = log2.Log
+//var log = log.Log
 
 type easyGoCtx struct {
 	parentCtx context.Context
+}
+
+type RouteRegister interface {
+	Get(patten string, handler any)
+	Post(patten string, handler any)
+	Put(patten string, handler any)
+	Delete(patten string, handler any)
+	RestGroup(patten string, controller router.RestFulGroup)
 }
 
 // EasyGo 启动实例
@@ -40,6 +50,7 @@ type EasyGo struct {
 }
 
 func (g EasyGo) NewRouter() router.EasyGoHttpRouter {
+
 	return g.route
 }
 
@@ -76,9 +87,9 @@ func NewEasyGo(options ...Option) *EasyGo {
 
 func (g EasyGo) Run() {
 
-	log.Info(fmt.Sprintf("[Name-%s-Port-%s] HTTP server is running.", g.name, g.port))
+	log.Log.Info(fmt.Sprintf("[Name-%s-Port-%s] HTTP server is running.", g.name, g.port))
 	err := g.baseServer.ListenAndServe()
 	if err != nil {
-		log.Fatal("Server run failed", zap.String("err", err.Error()))
+		log.Log.Fatal("Server run failed", zap.String("err", err.Error()))
 	}
 }
