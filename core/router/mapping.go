@@ -5,8 +5,6 @@ import (
 	"reflect"
 )
 
-var MRoutes *mappingRouter
-
 type mappingRouter struct {
 	routes map[string]map[string]*EasyGoHandlerFunc
 }

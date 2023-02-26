@@ -17,7 +17,7 @@ type EasyGoServeHTTP struct {
 
 func DefaultEasyGoServeHTTP() *EasyGoServeHTTP {
 	return &EasyGoServeHTTP{
-		router.MRoutes,
+		router.MappingRouter,
 	}
 }
 
@@ -233,7 +233,7 @@ func (s *EasyGoServeHTTP) dataMapStruct(data map[string]any, argType reflect.Typ
 	return val
 }
 
-func (s *EasyGoServeHTTP) handleRequest(writer http.ResponseWriter, data map[string]any, info *handlerFunc) { //nolint:typecheck
+func (s *EasyGoServeHTTP) handleRequest(writer http.ResponseWriter, data map[string]any, info *router.EasyGoHandlerFunc) { //nolint:typecheck
 	if s.router == nil {
 		panic("请注册路由")
 	}
@@ -241,12 +241,12 @@ func (s *EasyGoServeHTTP) handleRequest(writer http.ResponseWriter, data map[str
 	// 3. 获取请求参数
 	argValues := make([]reflect.Value, 0)
 	// 4. 将请求参数注入到handler参数中
-	for _, e := range info.in {
+	for _, e := range info.InParameter {
 		fmt.Println(*e)
 		argValues = append(argValues, s.dataMapStruct(data, *e))
 	}
 	// 5. 执行handler
-	resultArr := info.value.Call(argValues)
+	resultArr := info.HFunc.Call(argValues)
 	// 6. 获取handler执行结果，返回response
 	// for _, v := range resultArr {
 	//	// TODO.md: 检查error

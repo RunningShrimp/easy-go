@@ -1,7 +1,6 @@
 package config
 
 import (
-	"fmt"
 	"gopkg.in/yaml.v3" //nolint:typecheck
 	"os"
 )
@@ -20,11 +19,11 @@ type IInit interface {
 	// InitRedisClient(wrapperConfig WrapperConfig)
 }
 
-func Init(path string) {
-	initConfig(path)
-	// AppInit.InitDBClient(RsConfig.WrapperConfig)
-	// AppInit.InitRedisClient(RsConfig.WrapperConfig)
-}
+//func Init(path string) {
+//	initConfig(path)
+//	// AppInit.InitDBClient(RsConfig.WrapperConfig)
+//	// AppInit.InitRedisClient(RsConfig.WrapperConfig)
+//}
 
 func initConfig(configFile string) {
 	path := getEnvCfgFilePath(configFile)
@@ -38,12 +37,13 @@ func initConfig(configFile string) {
 		panic(err)
 	}
 }
-func ServerPort() string {
-	port := RsConfig.Config.Server.Port
 
-	if port < 0 || port > 65535 {
-		panic("端口不正确")
-	}
-
-	return fmt.Sprintf(":%d", port)
-}
+//func ServerPort() string {
+//	port := RsConfig.Config.Server.Port
+//
+//	if port < 0 || port > 65535 {
+//		panic("端口不正确")
+//	}
+//
+//	return fmt.Sprintf(":%d", port)
+//}

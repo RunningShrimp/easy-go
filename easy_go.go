@@ -52,7 +52,7 @@ func NewEasyGo(options ...Option) *EasyGo {
 		serveHandler: core.DefaultEasyGoServeHTTP(),
 		port:         "2357",
 		name:         "EasyGo",
-		route:        router.MRoutes,
+		route:        router.NewMappingRouter(),
 	}
 
 	for _, opt := range options {

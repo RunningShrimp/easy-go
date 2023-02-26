@@ -5,10 +5,6 @@ import (
 	"reflect"
 )
 
-func init() {
-	MRoutes = newMappingRouter()
-}
-
 type RouteRegister interface {
 	Get(patten string, handler any)    //nolint:typecheck
 	Post(patten string, handler any)   //nolint:typecheck
