@@ -38,10 +38,10 @@ type EasyGo struct {
 	// 支持从配置文件读取配置，方便统一管理配置，但大部分都是代码里硬编码
 	appConfigYamlFilePath string
 
-	route router.EasyGoHttpRouter
+	route router.EasyGoHTTPRouter
 }
 
-func (g EasyGo) NewRouter() router.EasyGoHttpRouter {
+func (g EasyGo) NewRouter() router.EasyGoHTTPRouter {
 
 	return g.route
 }
@@ -52,7 +52,6 @@ func NewEasyGo(options ...Option) *EasyGo {
 		serveHandler: core.DefaultEasyGoServeHTTP(),
 		port:         "2357",
 		name:         "EasyGo",
-		route:        router.NewMappingRouter(),
 	}
 
 	for _, opt := range options {

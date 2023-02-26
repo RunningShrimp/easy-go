@@ -21,8 +21,8 @@ type EasyGoHandlerFunc struct {
 	HFunc        reflect.Value   // 处理方法
 }
 
-type EasyGoHttpRouter interface {
-	FindHandlerByMethodUrl(method, urlPattern string) (EasyGoHandlerFunc, bool, int)
+type EasyGoHTTPRouter interface {
+	FindHandlerByMethodURL(method, urlPattern string) (EasyGoHandlerFunc, bool, int)
 	RouteRegister
 }
 

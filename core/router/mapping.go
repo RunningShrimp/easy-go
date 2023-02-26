@@ -9,42 +9,39 @@ type mappingRouter struct {
 	routes map[string]map[string]*EasyGoHandlerFunc
 }
 
-func newMappingRouter() *mappingRouter {
+func NewMappingRouter() *mappingRouter {
 	return &mappingRouter{}
 }
 
-func (mr *mappingRouter) FindHandlerByMethodUrl(urlPattern, method string) (EasyGoHandlerFunc, bool, int) {
+func (mr *mappingRouter) FindHandlerByMethodURL(urlPattern, method string) (EasyGoHandlerFunc, bool, int) {
 
 	handlers, ok := mr.routes[urlPattern]
 	if !ok {
 		return nullHandlerFunc, false, http.StatusNotFound
 	}
-	hitHandler, ok := handlers[method]
-	if !ok {
+
+	if _, ok := handlers[method]; !ok {
 		return nullHandlerFunc, false, http.StatusMethodNotAllowed
 	}
 
-	return *hitHandler, true, http.StatusOK
+	return *handlers[method], true, http.StatusOK
 }
 
 // RestGroup 批量添加路由，添加GET，POST，PUT，DELETE方法，暂不支持从路由上解析参数
 // TODO.md: 从路由解析参数
 func (mr *mappingRouter) RestGroup(patten string, controller RestFulGrouper) {
 	methodValue := reflect.ValueOf(controller)
-	getMethod := methodValue.MethodByName("Get")
-	postMethod := methodValue.MethodByName("Post")
-	putMethod := methodValue.MethodByName("Put")
-	deleteMethod := methodValue.MethodByName("Delete")
-	if getMethod.IsValid() {
+
+	if getMethod := methodValue.MethodByName("Get"); getMethod.IsValid() {
 		mr.handlerRouter(http.MethodGet, patten, getMethod, getMethod.Type())
 	}
-	if postMethod.IsValid() {
+	if postMethod := methodValue.MethodByName("Post"); postMethod.IsValid() {
 		mr.handlerRouter(http.MethodGet, patten, postMethod, postMethod.Type())
 	}
-	if putMethod.IsValid() {
+	if putMethod := methodValue.MethodByName("Put"); putMethod.IsValid() {
 		mr.handlerRouter(http.MethodGet, patten, putMethod, putMethod.Type())
 	}
-	if deleteMethod.IsValid() {
+	if deleteMethod := methodValue.MethodByName("Delete"); deleteMethod.IsValid() {
 		mr.handlerRouter(http.MethodGet, patten, deleteMethod, deleteMethod.Type())
 	}
 }
@@ -70,9 +67,9 @@ func (mr *mappingRouter) Delete(patten string, handler any) { //nolint:typecheck
 }
 
 func (mr *mappingRouter) addRouter(method, patten string, handler any) { //nolint:typecheck
-	//todo map存在线程安全问题
+	// todo map存在线程安全问题
 	if mr.routes == nil {
-		mr.routes = make(map[string]map[string]*EasyGoHandlerFunc, 4)
+		mr.routes = make(map[string]map[string]*EasyGoHandlerFunc)
 	}
 	if _, ok := mr.routes[patten]; !ok {
 		mr.routes[patten] = make(map[string]*EasyGoHandlerFunc)
@@ -97,12 +94,12 @@ func (mr *mappingRouter) handlerRouter(method, patten string, handlerValue refle
 	}
 	for i := 0; i < argInNum; i++ {
 		in := handlerType.In(i)
-
 		handelFunc.InParameter[i] = &in
 	}
-	for i := 0; i < argOutNum; i++ {
-		out := handlerType.Out(i)
-		handelFunc.OutParameter[i] = &out
+
+	for j := 0; j < argOutNum; j++ {
+		out := handlerType.Out(j)
+		handelFunc.OutParameter[j] = &out
 	}
 
 	mr.routes[patten][method] = handelFunc

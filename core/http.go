@@ -12,12 +12,12 @@ import (
 )
 
 type EasyGoServeHTTP struct {
-	router router.EasyGoHttpRouter
+	router router.EasyGoHTTPRouter
 }
 
 func DefaultEasyGoServeHTTP() *EasyGoServeHTTP {
 	return &EasyGoServeHTTP{
-		router.MappingRouter,
+		router.NewMappingRouter(),
 	}
 }
 
@@ -28,7 +28,7 @@ func (s *EasyGoServeHTTP) ServeHTTP(writer http.ResponseWriter, request *http.Re
 	httpMethod := request.Method
 	urlStr := request.URL.Path
 	// 2. 根据请求方法和url获取handler
-	handleFunc, ok, statusCode := s.router.FindHandlerByMethodUrl(urlStr, httpMethod)
+	handleFunc, ok, statusCode := s.router.FindHandlerByMethodURL(urlStr, httpMethod)
 	if !ok {
 		writer.WriteHeader(statusCode)
 	}
