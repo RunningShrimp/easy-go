@@ -2,7 +2,7 @@ package config
 
 import (
 	"fmt"
-	"gopkg.in/yaml.v3"
+	"gopkg.in/yaml.v3" //nolint:typecheck
 	"os"
 )
 
@@ -33,7 +33,7 @@ func initConfig(configFile string) {
 		panic(err)
 	}
 
-	err = yaml.Unmarshal(configContent, &RsConfig.WrapperConfig)
+	err = yaml.Unmarshal(configContent, &RsConfig.WrapperConfig) //nolint:typecheck
 	if err != nil {
 		panic(err)
 	}

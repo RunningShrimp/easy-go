@@ -30,6 +30,7 @@ jobs:
 
     - name: Build
       run: |
+        go mod tidy
         cd example
         go build -v
 

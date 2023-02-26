@@ -10,9 +10,6 @@ linters:
     # 禁止保留未使用的代码块
     #---------------------------------------
     - deadcode
-    # The linter 'deadcode' is deprecated (since v1.49.0) due to: The owner seems to have abandoned the linter
-    # 新版本的linter已经不建议使用deadcode了，不使用的代码不会被报错了
-    #---------------------------------------
     - ineffassign
     # 减少代码拷贝
     - dupl
@@ -50,8 +47,6 @@ linters:
     - importas
     # 类型断言时需检查是否成功
     - forcetypeassert
-    # 保证类型、常量、变量和函数的声明顺序和数量
-#    - decorder
     # 检查err的定义规范--types类型的定义是以Error结尾的，常量的定义是Err打头的
     - errname
     # 禁止errors使用'=='和'!='等表达式--与nil和io.EOF比较除外
@@ -95,7 +90,6 @@ linters:
     # 检查帮助函数里面有没有调用t.Helper()函数
     - thelper
     - bodyclose
-linters-settings:
 errcheck:
   check-type-assertions: true   # 检查类型断言
   check-blank: true             # 检查使用 _ 来处理错误

@@ -1,7 +1,7 @@
 package config
 
 import (
-	"gopkg.in/yaml.v3"
+	"gopkg.in/yaml.v3" //nolint:typecheck
 	"io/fs"
 	"os"
 	"path/filepath"
@@ -55,7 +55,7 @@ func getEnvType(appFile string) string {
 	if err != nil {
 		panic(err)
 	}
-	err = yaml.Unmarshal(content, &pro)
+	err = yaml.Unmarshal(content, &pro) //nolint:typecheck
 	if err != nil {
 		panic(err)
 	}

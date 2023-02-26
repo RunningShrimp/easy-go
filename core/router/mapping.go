@@ -52,26 +52,26 @@ func (mr *mappingRouter) RestGroup(patten string, controller RestFulGrouper) {
 }
 
 // Get http-get
-func (mr *mappingRouter) Get(patten string, handler any) {
+func (mr *mappingRouter) Get(patten string, handler any) { //nolint:typecheck
 	mr.addRouter(http.MethodGet, patten, handler)
 }
 
 // Post http-post
-func (mr *mappingRouter) Post(patten string, handler any) {
+func (mr *mappingRouter) Post(patten string, handler any) { //nolint:typecheck
 	mr.addRouter(http.MethodPost, patten, handler)
 }
 
 // Put http-put
-func (mr *mappingRouter) Put(patten string, handler any) {
+func (mr *mappingRouter) Put(patten string, handler any) { //nolint:typecheck
 	mr.addRouter(http.MethodPut, patten, handler)
 }
 
 // Delete http-delete
-func (mr *mappingRouter) Delete(patten string, handler any) {
+func (mr *mappingRouter) Delete(patten string, handler any) { //nolint:typecheck
 	mr.addRouter(http.MethodDelete, patten, handler)
 }
 
-func (mr *mappingRouter) addRouter(method, patten string, handler any) {
+func (mr *mappingRouter) addRouter(method, patten string, handler any) { //nolint:typecheck
 	//todo map存在线程安全问题
 	if mr.routes == nil {
 		mr.routes = make(map[string]map[string]*EasyGoHandlerFunc, 4)

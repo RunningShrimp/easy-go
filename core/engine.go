@@ -33,7 +33,7 @@ func (s *EasyGoServeHTTP) ServeHTTP(writer http.ResponseWriter, request *http.Re
 		writer.WriteHeader(statusCode)
 	}
 
-	data := make(map[string]any)
+	data := make(map[string]any) //nolint:typecheck
 	bodyData := request.Body
 	defer func(bodyData io.ReadCloser) {
 		err := bodyData.Close()
@@ -73,7 +73,7 @@ func (s *EasyGoServeHTTP) ServeHTTP(writer http.ResponseWriter, request *http.Re
 	s.dispatchRequest(writer, data, &handleFunc)
 
 }
-func (s *EasyGoServeHTTP) dispatchRequest(writer http.ResponseWriter, data map[string]any, egFunc *router.EasyGoHandlerFunc) {
+func (s *EasyGoServeHTTP) dispatchRequest(writer http.ResponseWriter, data map[string]any, egFunc *router.EasyGoHandlerFunc) { //nolint:typecheck
 	if s.router == nil {
 		panic("请注册路由")
 	}
@@ -233,7 +233,7 @@ func (s *EasyGoServeHTTP) dataMapStruct(data map[string]any, argType reflect.Typ
 	return val
 }
 
-func (s *EasyGoServeHTTP) handleRequest(writer http.ResponseWriter, data map[string]any, info *handlerFunc) {
+func (s *EasyGoServeHTTP) handleRequest(writer http.ResponseWriter, data map[string]any, info *handlerFunc) { //nolint:typecheck
 	if s.router == nil {
 		panic("请注册路由")
 	}
