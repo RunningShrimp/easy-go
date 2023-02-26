@@ -2,21 +2,18 @@ package router
 
 import (
 	"context"
-	"github.com/RunningShrimp/easy-go/core/log"
 	"reflect"
 )
-
-var routerLog = log.Log
 
 func init() {
 	MRoutes = newMappingRouter()
 }
 
 type RouteRegister interface {
-	Get(patten string, handler any)
-	Post(patten string, handler any)
-	Put(patten string, handler any)
-	Delete(patten string, handler any)
+	Get(patten string, handler any)    //nolint:typecheck
+	Post(patten string, handler any)   //nolint:typecheck
+	Put(patten string, handler any)    //nolint:typecheck
+	Delete(patten string, handler any) //nolint:typecheck
 	RestGroup(patten string, controller RestFulGrouper)
 }
 

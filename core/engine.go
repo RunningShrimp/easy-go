@@ -132,7 +132,10 @@ func (s *EasyGoServeHTTP) dispatchRequest(writer http.ResponseWriter, data map[s
 			_, _ = fmt.Fprintf(writer, "%s", string(bytes))
 			return
 		default:
-			writer.Write(val.Bytes())
+			_, err := writer.Write(val.Bytes())
+			if err != nil {
+				return
+			}
 			writer.WriteHeader(http.StatusOK)
 		}
 
@@ -142,7 +145,7 @@ func (s *EasyGoServeHTTP) dispatchRequest(writer http.ResponseWriter, data map[s
 
 }
 
-func (s *EasyGoServeHTTP) dataMapStruct(data map[string]any, argType reflect.Type) reflect.Value {
+func (s *EasyGoServeHTTP) dataMapStruct(data map[string]any, argType reflect.Type) reflect.Value { //nolint:typecheck
 	val := reflect.New(argType)
 
 	if val.Kind() == reflect.Ptr {
@@ -289,8 +292,10 @@ func (s *EasyGoServeHTTP) handleRequest(writer http.ResponseWriter, data map[str
 			_, _ = fmt.Fprintf(writer, "%s", string(bytes))
 			return
 		default:
-			writer.Write(val.Bytes())
-			writer.WriteHeader(http.StatusOK)
+			_, err := writer.Write(val.Bytes())
+			if err != nil {
+				return
+			}
 		}
 
 	} else {

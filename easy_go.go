@@ -19,14 +19,6 @@ type easyGoCtx struct {
 	parentCtx context.Context
 }
 
-type RouteRegister interface {
-	Get(patten string, handler any)
-	Post(patten string, handler any)
-	Put(patten string, handler any)
-	Delete(patten string, handler any)
-	RestGroup(patten string, controller router.RestFulGroup)
-}
-
 // EasyGo 启动实例
 type EasyGo struct {
 	// 支持自定义 HTTP baseServer handler
