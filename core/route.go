@@ -1,6 +1,7 @@
 package core
 
 import (
+	"github.com/RunningShrimp/easy-go/core/router"
 	"net/http"
 	"reflect"
 )
@@ -47,7 +48,7 @@ func (mr *mappingRoutes) DispatchHandlerByMethodAndUlr(method, urlPattern string
 
 // RestGroup 批量添加路由，添加GET，POST，PUT，DELETE方法，暂不支持从路由上解析参数
 // TODO.md: 从路由解析参数
-func (mr *mappingRoutes) RestGroup(patten string, controller IController) {
+func (mr *mappingRoutes) RestGroup(patten string, controller router.RestFulGroup) {
 	methodValue := reflect.ValueOf(controller)
 	getMethod := methodValue.MethodByName("Get")
 	postMethod := methodValue.MethodByName("Post")
