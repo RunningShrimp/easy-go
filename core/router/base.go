@@ -2,21 +2,14 @@ package router
 
 import (
 	"context"
-	"github.com/RunningShrimp/easy-go/core/log"
 	"reflect"
 )
 
-var routerLog = log.Log
-
-func init() {
-	MRoutes = newMappingRouter()
-}
-
 type RouteRegister interface {
-	Get(patten string, handler any)
-	Post(patten string, handler any)
-	Put(patten string, handler any)
-	Delete(patten string, handler any)
+	Get(patten string, handler any)    //nolint:typecheck
+	Post(patten string, handler any)   //nolint:typecheck
+	Put(patten string, handler any)    //nolint:typecheck
+	Delete(patten string, handler any) //nolint:typecheck
 	RestGroup(patten string, controller RestFulGrouper)
 }
 
@@ -28,8 +21,8 @@ type EasyGoHandlerFunc struct {
 	HFunc        reflect.Value   // 处理方法
 }
 
-type EasyGoHttpRouter interface {
-	FindHandlerByMethodUrl(method, urlPattern string) (EasyGoHandlerFunc, bool, int)
+type EasyGoHTTPRouter interface {
+	FindHandlerByMethodURL(method, urlPattern string) (EasyGoHandlerFunc, bool, int)
 	RouteRegister
 }
 

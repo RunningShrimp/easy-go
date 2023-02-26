@@ -12,12 +12,12 @@ import (
 )
 
 type EasyGoServeHTTP struct {
-	router router.EasyGoHttpRouter
+	router router.EasyGoHTTPRouter
 }
 
 func DefaultEasyGoServeHTTP() *EasyGoServeHTTP {
 	return &EasyGoServeHTTP{
-		router.MRoutes,
+		router.NewMappingRouter(),
 	}
 }
 
@@ -28,12 +28,12 @@ func (s *EasyGoServeHTTP) ServeHTTP(writer http.ResponseWriter, request *http.Re
 	httpMethod := request.Method
 	urlStr := request.URL.Path
 	// 2. 根据请求方法和url获取handler
-	handleFunc, ok, statusCode := s.router.FindHandlerByMethodUrl(urlStr, httpMethod)
+	handleFunc, ok, statusCode := s.router.FindHandlerByMethodURL(urlStr, httpMethod)
 	if !ok {
 		writer.WriteHeader(statusCode)
 	}
 
-	data := make(map[string]any)
+	data := make(map[string]any) //nolint:typecheck
 	bodyData := request.Body
 	defer func(bodyData io.ReadCloser) {
 		err := bodyData.Close()
@@ -73,7 +73,7 @@ func (s *EasyGoServeHTTP) ServeHTTP(writer http.ResponseWriter, request *http.Re
 	s.dispatchRequest(writer, data, &handleFunc)
 
 }
-func (s *EasyGoServeHTTP) dispatchRequest(writer http.ResponseWriter, data map[string]any, egFunc *router.EasyGoHandlerFunc) {
+func (s *EasyGoServeHTTP) dispatchRequest(writer http.ResponseWriter, data map[string]any, egFunc *router.EasyGoHandlerFunc) { //nolint:typecheck
 	if s.router == nil {
 		panic("请注册路由")
 	}
@@ -132,7 +132,10 @@ func (s *EasyGoServeHTTP) dispatchRequest(writer http.ResponseWriter, data map[s
 			_, _ = fmt.Fprintf(writer, "%s", string(bytes))
 			return
 		default:
-			writer.Write(val.Bytes())
+			_, err := writer.Write(val.Bytes())
+			if err != nil {
+				return
+			}
 			writer.WriteHeader(http.StatusOK)
 		}
 
@@ -142,7 +145,7 @@ func (s *EasyGoServeHTTP) dispatchRequest(writer http.ResponseWriter, data map[s
 
 }
 
-func (s *EasyGoServeHTTP) dataMapStruct(data map[string]any, argType reflect.Type) reflect.Value {
+func (s *EasyGoServeHTTP) dataMapStruct(data map[string]any, argType reflect.Type) reflect.Value { //nolint:typecheck
 	val := reflect.New(argType)
 
 	if val.Kind() == reflect.Ptr {
@@ -230,7 +233,7 @@ func (s *EasyGoServeHTTP) dataMapStruct(data map[string]any, argType reflect.Typ
 	return val
 }
 
-func (s *EasyGoServeHTTP) handleRequest(writer http.ResponseWriter, data map[string]any, info *handlerFunc) {
+func (s *EasyGoServeHTTP) handleRequest(writer http.ResponseWriter, data map[string]any, info *router.EasyGoHandlerFunc) { //nolint:typecheck
 	if s.router == nil {
 		panic("请注册路由")
 	}
@@ -238,12 +241,12 @@ func (s *EasyGoServeHTTP) handleRequest(writer http.ResponseWriter, data map[str
 	// 3. 获取请求参数
 	argValues := make([]reflect.Value, 0)
 	// 4. 将请求参数注入到handler参数中
-	for _, e := range info.in {
+	for _, e := range info.InParameter {
 		fmt.Println(*e)
 		argValues = append(argValues, s.dataMapStruct(data, *e))
 	}
 	// 5. 执行handler
-	resultArr := info.value.Call(argValues)
+	resultArr := info.HFunc.Call(argValues)
 	// 6. 获取handler执行结果，返回response
 	// for _, v := range resultArr {
 	//	// TODO.md: 检查error
@@ -289,8 +292,10 @@ func (s *EasyGoServeHTTP) handleRequest(writer http.ResponseWriter, data map[str
 			_, _ = fmt.Fprintf(writer, "%s", string(bytes))
 			return
 		default:
-			writer.Write(val.Bytes())
-			writer.WriteHeader(http.StatusOK)
+			_, err := writer.Write(val.Bytes())
+			if err != nil {
+				return
+			}
 		}
 
 	} else {

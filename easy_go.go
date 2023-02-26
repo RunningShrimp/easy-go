@@ -19,14 +19,6 @@ type easyGoCtx struct {
 	parentCtx context.Context
 }
 
-type RouteRegister interface {
-	Get(patten string, handler any)
-	Post(patten string, handler any)
-	Put(patten string, handler any)
-	Delete(patten string, handler any)
-	RestGroup(patten string, controller router.RestFulGroup)
-}
-
 // EasyGo 启动实例
 type EasyGo struct {
 	// 支持自定义 HTTP baseServer handler
@@ -46,10 +38,10 @@ type EasyGo struct {
 	// 支持从配置文件读取配置，方便统一管理配置，但大部分都是代码里硬编码
 	appConfigYamlFilePath string
 
-	route router.EasyGoHttpRouter
+	route router.EasyGoHTTPRouter
 }
 
-func (g EasyGo) NewRouter() router.EasyGoHttpRouter {
+func (g EasyGo) NewRouter() router.EasyGoHTTPRouter {
 
 	return g.route
 }
@@ -60,7 +52,6 @@ func NewEasyGo(options ...Option) *EasyGo {
 		serveHandler: core.DefaultEasyGoServeHTTP(),
 		port:         "2357",
 		name:         "EasyGo",
-		route:        router.MRoutes,
 	}
 
 	for _, opt := range options {

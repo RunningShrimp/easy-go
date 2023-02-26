@@ -64,7 +64,6 @@ func TestEasyGo_Run(t *testing.T) {
 				timeOut:               tt.fields.timeOut,
 				maxConn:               tt.fields.maxConn,
 				appConfigYamlFilePath: tt.fields.appConfigYamlFilePath,
-				DEBUG:                 tt.fields.DEBUG,
 			}
 			easyGo.Run()
 		})
