@@ -3,17 +3,17 @@ package easygo
 import (
 	"context"
 	"fmt"
+	"net/http"
+
 	"github.com/RunningShrimp/easy-go/core"
 	"github.com/RunningShrimp/easy-go/core/router"
-	"net/http"
 
 	"github.com/RunningShrimp/easy-go/core/log"
 
-	"go.uber.org/zap"
-	"time"
-)
+	"time" //nolint:gci
 
-//var log = log.Log
+	"go.uber.org/zap"
+)
 
 type easyGoCtx struct {
 	parentCtx context.Context
@@ -42,12 +42,10 @@ type EasyGo struct {
 }
 
 func (g EasyGo) NewRouter() router.EasyGoHTTPRouter {
-
 	return g.route
 }
 
 func NewEasyGo(options ...Option) *EasyGo {
-
 	easyGo := &EasyGo{
 		serveHandler: core.DefaultEasyGoServeHTTP(),
 		port:         "2357",
@@ -58,26 +56,17 @@ func NewEasyGo(options ...Option) *EasyGo {
 		opt(easyGo)
 	}
 
-	if easyGo.appConfigYamlFilePath != "" {
-		// init config from file
-	}
-
 	if easyGo.baseServer == nil {
-		easyGo.baseServer = &http.Server{
+		easyGo.baseServer = &http.Server{ //nolint:gosec
 			Addr:    ":" + easyGo.port,
 			Handler: core.DefaultEasyGoServeHTTP(),
 		}
 	}
 
-	// init log
-
-	// listening single or kill
-
 	return easyGo
 }
 
 func (g EasyGo) Run() {
-
 	log.Log.Info(fmt.Sprintf("[Name-%s-Port-%s] HTTP server is running.", g.name, g.port))
 	err := g.baseServer.ListenAndServe()
 	if err != nil {

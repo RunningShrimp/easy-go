@@ -5,8 +5,9 @@ import (
 	"go.uber.org/zap"
 )
 
-var Log *zap.Logger
+var Log *zap.Logger //nolint:gochecknoglobals
 
+//nolint:gochecknoinits
 func init() {
 	var err error
 

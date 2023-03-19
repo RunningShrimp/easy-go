@@ -20,8 +20,19 @@ func TestNewEasyGo(t *testing.T) {
 		args args
 		want *EasyGo
 	}{
-		{name: "null option", args: args{options: []Option{}}, want: NewEasyGo()},
-		{name: "input option", args: args{options: []Option{WithMaxConn(2), WithTimeOut(1), WithName("custom_name")}}, want: easyGo2},
+		{
+			name: "null option",
+			args: args{options: []Option{}},
+			want: NewEasyGo(),
+		},
+		{
+			name: "input option",
+			args: args{
+				options: []Option{
+					WithMaxConn(2), WithTimeOut(1), WithName("custom_name")},
+			},
+			want: easyGo2,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

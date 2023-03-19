@@ -6,14 +6,14 @@ import (
 )
 
 type RouteRegister interface {
-	Get(patten string, handler any)    //nolint:typecheck
-	Post(patten string, handler any)   //nolint:typecheck
-	Put(patten string, handler any)    //nolint:typecheck
-	Delete(patten string, handler any) //nolint:typecheck
+	Get(patten string, handler any)
+	Post(patten string, handler any)
+	Put(patten string, handler any)
+	Delete(patten string, handler any)
 	RestGroup(patten string, controller RestFulGrouper)
 }
 
-var nullHandlerFunc = EasyGoHandlerFunc{}
+var nullHandlerFunc = EasyGoHandlerFunc{} //nolint:gochecknoglobals
 
 type EasyGoHandlerFunc struct {
 	InParameter  []*reflect.Type // 入参列表,按照

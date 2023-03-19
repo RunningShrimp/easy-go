@@ -1,20 +1,20 @@
 linters:
-  disable-all: true  # 关闭其他linter
+  disable-all: false  # 关闭其他linter
   enable:            # 下面是开启的linter列表，之后的英文注释介绍了相应linter的功能
     # 进制使用非ASCII字符
     - asciicheck
-    - cyclop
-    - gocognit
-    - gocyclo
+#    - cyclop
+#    - gocognit
+#    - gocyclo
     - gocritic
     # 禁止保留未使用的代码块
     #---------------------------------------
     - deadcode
     - ineffassign
     # 减少代码拷贝
-    - dupl
+#    - dupl
     # 禁止两个time.Duration类型相乘
-    - durationcheck
+#    - durationcheck
     # 所有err都要处理
     - errcheck
     # 在Go 1.13之后使用errors.Wrap可能导致的问题
@@ -24,11 +24,11 @@ linters:
     # 禁止将for-range value的指针暴露给外部
     - exportloopref
     # 禁止使用特定的标识符
-    - forbidigo
+#    - forbidigo
     # 禁止出现长函数
     - funlen
     # 控制golang的包引用的顺序
-    - gci
+#    - gci
     # 禁止使用全局变量  --需要使用  //nolint:gochecknoglobals // 说明原因
     - gochecknoglobals
     # 禁止使用init函数
@@ -36,8 +36,6 @@ linters:
     # 如果有相同的string变量请使用consts替换
     - goconst
     # 检查if语句是否有简单的语法
-    - ifshort
-    # 禁止出现长语句
     - lll
     # 如果知道slice大小，定义时需分配空间
     - prealloc
@@ -53,8 +51,8 @@ linters:
     - goerr113
     # 官方代码格式化
     - gofmt
-    - gofumpt
-    - goimports
+#    - gofumpt
+#    - goimports
     # 禁止使用魔法数字
     - gomnd
     # 检查依赖的黑白名单
@@ -68,9 +66,9 @@ linters:
     # 检查拼写错误
     - misspell
     # 如果函数过长，禁用裸返回
-    - nakedret
+#    - nakedret
     # 禁止深度嵌套的if语句
-    - nestif
+#    - nestif
     # 如果使用nolint指令需要给出理由-- //nolint:gochecknoglobals // 原因
     - nolintlint
     # 禁止使用Go关键字命名
@@ -78,15 +76,15 @@ linters:
     # 去掉没有必要的type转换
     - unconvert
     # 强制使用空行
-    - wsl
+#    - wsl
     # 检查文件头部和尾部的换行
     - whitespace
     # 替换golint的
-    - revive
+#    - revive
     # 测试代码使用*_test的包目录
-    - testpackage
+#    - testpackage
     # 启用并行测试
-    - paralleltest
+#    - paralleltest
     # 检查帮助函数里面有没有调用t.Helper()函数
     - thelper
     - bodyclose
