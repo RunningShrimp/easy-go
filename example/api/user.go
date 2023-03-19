@@ -1,7 +1,7 @@
 package api
 
 import (
-	"fmt"
+	"fmt" //nolint:gci
 	"github.com/RunningShrimp/easy-go/core/router"
 )
 
